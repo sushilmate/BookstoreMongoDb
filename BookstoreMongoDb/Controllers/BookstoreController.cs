@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using BookstoreMongoDb.Models.BooksApi.Models;
+﻿using BookstoreMongoDb.Models.BooksApi.Models;
 using BookstoreMongoDb.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookstoreMongoDb.Controllers
 {
@@ -21,15 +21,15 @@ namespace BookstoreMongoDb.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Book>> Get()
+        public async Task<ActionResult<List<Book>>> GetAsync()
         {
-           return _bookService.Get();
+            return await _bookService.GetAsync();
         }
 
         [HttpGet("{id:length(24)}", Name = "GetBook")]
-        public ActionResult<Book> Get(string id)
+        public async Task<ActionResult<Book>> GetAsync(string id)
         {
-            var book = _bookService.Get(id);
+            var book = await _bookService.GetAsync(id);
 
             if (book == null)
             {
@@ -40,39 +40,39 @@ namespace BookstoreMongoDb.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Book> Create(Book book)
+        public async Task<ActionResult<Book>> CreateAsync(Book book)
         {
-            _bookService.Create(book);
+            await _bookService.CreateAsync(book);
 
             return CreatedAtRoute("GetBook", new { id = book.Id.ToString() }, book);
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Book bookIn)
+        public async Task<IActionResult> UpdateAsync(string id, Book bookIn)
         {
-            var book = _bookService.Get(id);
+            var book = await _bookService.GetAsync(id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _bookService.Update(id, bookIn);
+            await _bookService.UpdateAsync(id, bookIn);
 
             return NoContent();
         }
 
         [HttpDelete("{id:length(24)}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
-            var book = _bookService.Get(id);
+            var book = await _bookService.GetAsync(id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _bookService.Remove(book.Id);
+            await _bookService.RemoveAsync(book.Id);
 
             return NoContent();
         }
